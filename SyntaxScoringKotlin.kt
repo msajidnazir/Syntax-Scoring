@@ -24,53 +24,50 @@ Show the Total Error Score now
 
 private const val input = "[({(<(())[]>[[{[]{<()<>>\n" + "[(()[<>])]({[<{<<[]>>(\n" + "{([(<{}[<>[]}>{[]{[(<()>\n" + "(((({<>}<{<{<>}{[]{[]{}\n" + "[[<[([]))<([[{}[[()]]]\n" + "[{[{({}]{}}([{[{{{}}([]\n" + "{<[[]]>}<{[{[{[]{()[[[]\n" + "[<(<(<(<{}))><([]([]()\n" + "<{([([[(<>()){}]>(<<{{\n" + "<{([{{}}[<[[[<>{}]]]>[]]"
 val openingBracketsStack = Stack<Char>() //STACK to save opening brackets read from line
-private var totalErrorScore = 0
+private var totalErrorScore = 0 //Represents the total error score of whole input text
+private val openingBracketsMap = mapOf('(' to '(', '[' to '[', '{' to '{', '<' to '<')
+private val validBracketChunksMap = mapOf('(' to ')', '[' to ']', '{' to '}', '<' to '>')
+private val invalidBracketScores = mapOf(')' to 3, ']' to 57, '}' to 1197, '>' to 25137)
 
 /**Method which will calculate error score for input text*/
 fun main() {
 
     val inputLines = input.split("\n") //CONVERT input text to a list of lines, with a single line on each index
 
-    for (currentLine in inputLines) { //LOOP to iterate through each line one by one
+    for (currentLine in inputLines) { //LOOP-A to iterate through each line one by one
         clearStack() //IF previous line was incomplete it'll leave some characters in stack, so trash them first
-        for (inputCharacter in currentLine) { //LOOP to iterate through each character of the line we're currently examining
+        for (inputCharacter in currentLine) { //LOOP-B to iterate through each character of the line we're currently examining
             when (isOpeningBracket(inputCharacter)) { //CHECK IF the character we took from line is an opening bracket or not
                 true -> saveOnStack(inputCharacter) //YES, then save it on stack for later use
                 else -> { //NO
-                    //Get the last saved character from stack
-                    //IF the character we popped and the inputCharacter don't form a valid chunk
-                    //Then modify the total error score accordingly and break the loop for validation of current line
-                    if (!isValidChunk(getLastSavedCharacter(), inputCharacter)) { //POP a character from stack and see if it forms a valid or invalid chunk with the input character
-                        addErrorScoreOf(inputCharacter)
+                     if (isNotValidChunk(getLastSavedCharacter(), inputCharacter)) { //POP a character from stack and see if it forms a valid or invalid chunk with the input character
+                        addErrorScoreOf(inputCharacter) //ADD the error score of invalid input character to the total score
                         clearStack() //Clean the STACK for validation of next line
-                        break //BREAK the LOOP at first error
+                        break //BREAK the LOOP-B at first encounter of an error
                     }
                 }
             }
-        } //LOOP for validation of one single line ends here
-    } //LOOP for validation of all lines ends here
+        } //LOOP-B for validation of one single line ends here
+    } //LOOP-A for validation of all lines ends here
 
     println("Total Error Score: $totalErrorScore")
 }
+
 /**Method which will if the character we read from input line is an opening bracket or not*/
 private fun isOpeningBracket(inputCharacter: Char): Boolean {
-    return arrayOf('(','[','{','<').contains(inputCharacter)
+    return openingBracketsMap.contains(inputCharacter)
 }
 
 /**Method which decides if the closing bracket is a valid bracket corresponding to the opening bracket or not*/
-private fun isValidChunk(storedCharacter: Char, currentCharacter: Char): Boolean {
-    return arrayOf("()","{}","[]","<>").contains(storedCharacter.toString()+currentCharacter.toString())
+private fun isNotValidChunk(storedCharacter: Char, currentCharacter: Char): Boolean {
+    return validBracketChunksMap.getValue(storedCharacter) != currentCharacter
 }
 
 /**Method to obtain error score of the invalid character*/
 private fun getErrorScoreOf(inputCharacter: Char): Int {
-    return when (inputCharacter) {
-        ')' -> 3
-        ']' -> 57
-        '}' -> 1197
-        else -> 25137
-    }
+    return invalidBracketScores.getValue(inputCharacter)
 }
+
 /**Method to save a character on top of Stack*/
 private fun saveOnStack(inputCharacter: Char) {
     openingBracketsStack.push(inputCharacter)
@@ -86,7 +83,7 @@ private fun addErrorScoreOf(inputCharacter: Char) {
     totalErrorScore += getErrorScoreOf(inputCharacter)
 }
 
-/**Method to modify error score of invalid character*/
+/**Method to clean the stack for validation of next line*/
 private fun clearStack() {
     openingBracketsStack.clear()
 }
