@@ -4,6 +4,13 @@ import java.util.Stack
 
 //Problem: https://adventofcode.com/2021/day/10
 
+private const val input = "[({(<(())[]>[[{[]{<()<>>\n" + "[(()[<>])]({[<{<<[]>>(\n" + "{([(<{}[<>[]}>{[]{[(<()>\n" + "(((({<>}<{<{<>}{[]{[]{}\n" + "[[<[([]))<([[{}[[()]]]\n" + "[{[{({}]{}}([{[{{{}}([]\n" + "{<[[]]>}<{[{[{[]{()[[[]\n" + "[<(<(<(<{}))><([]([]()\n" + "<{([([[(<>()){}]>(<<{{\n" + "<{([{{}}[<[[[<>{}]]]>[]]"
+val openingBracketsStack = Stack<Char>() //STACK to save opening brackets read from line
+private var totalErrorScore = 0 //Represents the total error score of whole input text
+private val openingBracketsMap = mapOf('(' to '(', '[' to '[', '{' to '{', '<' to '<')
+private val validBracketChunksMap = mapOf('(' to ')', '[' to ']', '{' to '}', '<' to '>')
+private val invalidBracketScores = mapOf(')' to 3, ']' to 57, '}' to 1197, '>' to 25137)
+
 /**Method which will calculate error score for input text*/
 fun main() {
 
@@ -63,12 +70,6 @@ private fun clearStack() {
     openingBracketsStack.clear()
 }
 
-private const val input = "[({(<(())[]>[[{[]{<()<>>\n" + "[(()[<>])]({[<{<<[]>>(\n" + "{([(<{}[<>[]}>{[]{[(<()>\n" + "(((({<>}<{<{<>}{[]{[]{}\n" + "[[<[([]))<([[{}[[()]]]\n" + "[{[{({}]{}}([{[{{{}}([]\n" + "{<[[]]>}<{[{[{[]{()[[[]\n" + "[<(<(<(<{}))><([]([]()\n" + "<{([([[(<>()){}]>(<<{{\n" + "<{([{{}}[<[[[<>{}]]]>[]]"
-val openingBracketsStack = Stack<Char>() //STACK to save opening brackets read from line
-private var totalErrorScore = 0 //Represents the total error score of whole input text
-private val openingBracketsMap = mapOf('(' to '(', '[' to '[', '{' to '{', '<' to '<')
-private val validBracketChunksMap = mapOf('(' to ')', '[' to ']', '{' to '}', '<' to '>')
-private val invalidBracketScores = mapOf(')' to 3, ']' to 57, '}' to 1197, '>' to 25137)
 
 /*
 Solution Algorithm:
