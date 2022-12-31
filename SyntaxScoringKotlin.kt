@@ -55,7 +55,7 @@ private fun saveOnStack(inputCharacter: Char) {
     openingBracketsStack.push(inputCharacter)
 }
 
-/**Method to save a character on top of Stack*/
+/**Method to pop a character from top of Stack and return it to caller*/
 private fun getLastSavedCharacter(): Char {
     return openingBracketsStack.pop()
 }
