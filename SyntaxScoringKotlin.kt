@@ -32,17 +32,17 @@ fun main() {
     val inputLines = input.split("\n") //CONVERT input text to a list of lines, with a single line on each index
 
     for (currentLine in inputLines) { //LOOP to iterate through each line one by one
-        openingBracketsStack.clear() //IF previous line was incomplete it'll leave some characters in stack, so trash them first
+        clearStack() //IF previous line was incomplete it'll leave some characters in stack, so trash them first
         for (inputCharacter in currentLine) { //LOOP to iterate through each character of the line we're currently examining
             when (isOpeningBracket(inputCharacter)) { //CHECK IF the character we took from line is an opening bracket or not
-                true -> openingBracketsStack.push(inputCharacter) //YES, then save it on stack for later use
+                true -> saveOnStack(inputCharacter) //YES, then save it on stack for later use
                 else -> { //NO
                     //Get the last saved character from stack
                     //IF the character we popped and the inputCharacter don't form a valid chunk
                     //Then modify the total error score accordingly and break the loop for validation of current line
-                    if (!isValidChunk(openingBracketsStack.pop(), inputCharacter)) { //POP a character from stack and see if it forms a valid or invalid chunk with the input character
-                        totalErrorScore += getErrorScoreOf(inputCharacter)
-                        openingBracketsStack.clear() //Clean the STACK for validation of next line
+                    if (!isValidChunk(getLastSavedCharacter(), inputCharacter)) { //POP a character from stack and see if it forms a valid or invalid chunk with the input character
+                        addErrorScoreOf(inputCharacter)
+                        clearStack() //Clean the STACK for validation of next line
                         break //BREAK the LOOP at first error
                     }
                 }
@@ -62,7 +62,7 @@ private fun isValidChunk(storedCharacter: Char, currentCharacter: Char): Boolean
     return arrayOf("()","{}","[]","<>").contains(storedCharacter.toString()+currentCharacter.toString())
 }
 
-/**Method which will if the character we read from input line is an opening bracket or not*/
+/**Method to obtain error score of the invalid character*/
 private fun getErrorScoreOf(inputCharacter: Char): Int {
     return when (inputCharacter) {
         ')' -> 3
@@ -70,4 +70,23 @@ private fun getErrorScoreOf(inputCharacter: Char): Int {
         '}' -> 1197
         else -> 25137
     }
+}
+/**Method to save a character on top of Stack*/
+private fun saveOnStack(inputCharacter: Char) {
+    openingBracketsStack.push(inputCharacter)
+}
+
+/**Method to save a character on top of Stack*/
+private fun getLastSavedCharacter(): Char {
+    return openingBracketsStack.pop()
+}
+
+/**Method to modify error score of invalid character*/
+private fun addErrorScoreOf(inputCharacter: Char) {
+    totalErrorScore += getErrorScoreOf(inputCharacter)
+}
+
+/**Method to modify error score of invalid character*/
+private fun clearStack() {
+    openingBracketsStack.clear()
 }
